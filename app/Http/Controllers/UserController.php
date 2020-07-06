@@ -85,12 +85,16 @@ class UserController extends Controller
         } else {
             unset($usuario->password);
         }
-
+        //modificamos esta parte para que actualice roles de usuarios
+        //si tiene rol actualizamos el rol
+        // si no tiene rol le asignamos un rol
         $role = $usuario->roles;
         if (count($role) > 0) {
             $role_id = $role[0]->id;
+            User::find($id)->roles()->updateExistingPivot($role_id, ['role_id' => $request->get('rol')]);
+        } else {
+            $usuario->asignarRol($request->get('rol'));
         }
-        User::find($id)->roles()->updateExistingPivot($role_id, ['role_id' => $request->get('rol')]);
 
         $usuario->update();
 
